@@ -1,0 +1,6 @@
+@font-face {
+	font-family: "Garibaldi Medium";
+	font-style: normal;
+	font-weight: 400;
+	src: local("Garibaldi-Medium"), url("Garibaldi-Medium.otf") format("otf");
+}
