@@ -3,9 +3,9 @@ import { Poppins } from "next/font/google";
 import "../../public/fonts/heywow.css";
 import { useRef, useState } from "react";
 import { Resend } from "resend";
+import { List } from "postcss/lib/list";
 
 const poppins = Poppins({ weight: "500", subsets: ["latin"] });
-const resend = new Resend("re_TVVokfRt_HQPCsg1ngy9NPnvm7VkPKSVr");
 
 export default function ContactForm() {
 	interface UploadedFile {
@@ -14,6 +14,18 @@ export default function ContactForm() {
 	}
 
 	const [files, setFiles] = useState<UploadedFile[]>([]);
+
+	function changeRadioColor(): void {
+		let radioButtons = document.getElementsByName("budget");
+		radioButtons.forEach((rbtn) => {
+			let radioElement = rbtn as HTMLInputElement;
+			if (radioElement.checked) {
+				rbtn.parentElement!!.parentElement!!.className = "selectedRadio";
+			} else {
+				rbtn.parentElement!!.parentElement!!.className = "notSelectedRadio";
+			}
+		});
+	}
 
 	async function sendForm(event: any) {
 		try {
@@ -60,9 +72,12 @@ export default function ContactForm() {
 					files: bufferFiles,
 				}),
 			});
+			let responseBody: any = await serverResponse.json();
+			alert(responseBody.message);
 			if (serverResponse.ok) {
 				location.reload();
 			}
+			location.reload();
 		} catch (error: any) {}
 	}
 
@@ -79,15 +94,37 @@ export default function ContactForm() {
 		let divFile = document.getElementById("fileContainer");
 		let listOfFiles = document.createElement("ul");
 
-		divFile?.replaceWith(listOfFiles);
 		listOfFiles.id = "fileList";
+		listOfFiles.style.display = "flex";
+		listOfFiles.style.flexDirection = "column";
+
+		const selectedFilesParagraph = document.createElement("p");
+		selectedFilesParagraph.innerHTML = "Selected files: ";
+
+		divFile?.replaceWith(selectedFilesParagraph);
+		selectedFilesParagraph.appendChild(listOfFiles);
+		selectedFilesParagraph.style.color = "#212129";
 
 		for (let i = 0; i < updatedFiles.length; i++) {
 			const listItem = document.createElement("li");
-			const removeButton = document.createElement("button");
-			let buttonImage = document.createElement("img");
+			const removeFile = document.createElement("img");
+
+			removeFile.src = "x.svg";
+			removeFile.width = 30;
+			removeFile.height = 30;
+			removeFile.style.display = "inline";
+			removeFile.addEventListener("click", () => {
+				fileRemove(i);
+				listItem.remove();
+				removeFile.remove();
+				if (listOfFiles.childElementCount == 0) {
+					selectedFilesParagraph.replaceWith(divFile!!);
+					listOfFiles.remove();
+				}
+			});
 			listItem.innerHTML =
-				updatedFiles[i].name + " " + updatedFiles[i].size + " KB";
+				updatedFiles[i].name + " - " + updatedFiles[i].size + " KB";
+			listItem.appendChild(removeFile);
 			listOfFiles.appendChild(listItem);
 		}
 
@@ -106,10 +143,12 @@ export default function ContactForm() {
 	}
 	return (
 		<main>
-			<div style={{ display: "block" }}>
+			<div style={{ display: "block", padding: "100px 20px" }}>
 				<h1
 					style={{
 						position: "relative",
+						paddingTop: "50px",
+						paddingBottom: "100px",
 						zIndex: 1,
 						left: "5%",
 						top: "15%",
@@ -120,14 +159,14 @@ export default function ContactForm() {
 						width: "800px",
 					}}
 				>
-					Let's collaborate{" "}
+					Let's collaborate
 					<span style={{ color: "#BF3939", display: "inline" }}>.</span>
 				</h1>
 				<h1
 					style={{
-						position: "relative",
-						top: 0,
-						left: "2%",
+						position: "absolute",
+						top: "20%",
+						left: "5%",
 						lineHeight: "64px",
 						zIndex: 0,
 						width: "100%",
@@ -307,22 +346,23 @@ export default function ContactForm() {
 						What is your budget?*
 					</h5>
 					<div
+						className="notSelectedRadio"
 						style={{
 							borderColor: "#CBD3D6",
 							border: "2px solid",
 							borderRadius: "48px",
 							textAlign: "center",
-							height: "36px",
+							height: "100%",
 						}}
 					>
 						<label
 							style={{
-								color: "#212129",
 								fontFamily: "HeyWow Bold",
 								cursor: "pointer",
 							}}
 						>
 							<input
+								onClick={changeRadioColor}
 								type="radio"
 								name="budget"
 								value={"Up to 50.000 eur"}
@@ -332,24 +372,25 @@ export default function ContactForm() {
 						</label>
 					</div>
 					<div
+						className="notSelectedRadio"
 						style={{
 							width: "20%",
 							borderColor: "#CBD3D6",
 							border: "2px solid",
 							borderRadius: "48px",
 							textAlign: "center",
-							height: "36px",
 							flexGrow: 1,
+							height: "100%",
 						}}
 					>
 						<label
 							style={{
-								color: "#212129",
 								fontFamily: "HeyWow Bold",
 								cursor: "pointer",
 							}}
 						>
 							<input
+								onClick={changeRadioColor}
 								type="radio"
 								name="budget"
 								value={"50.000 eur - 100.000 eur"}
@@ -359,23 +400,24 @@ export default function ContactForm() {
 						</label>
 					</div>
 					<div
+						className="notSelectedRadio"
 						style={{
 							borderColor: "#CBD3D6",
 							border: "2px solid",
 							borderRadius: "48px",
 							textAlign: "center",
-							height: "36px",
 							flexGrow: 1,
+							height: "100%",
 						}}
 					>
 						<label
 							style={{
-								color: "#212129",
 								fontFamily: "HeyWow Bold",
 								cursor: "pointer",
 							}}
 						>
 							<input
+								onClick={changeRadioColor}
 								type="radio"
 								name="budget"
 								value={"100.000 eur - 250.000 eur"}
@@ -385,23 +427,24 @@ export default function ContactForm() {
 						</label>
 					</div>
 					<div
+						className="notSelectedRadio"
 						style={{
 							width: "20%",
 							borderColor: "#CBD3D6",
 							border: "2px solid",
 							borderRadius: "48px",
 							textAlign: "center",
-							height: "36px",
+							height: "100%",
 						}}
 					>
 						<label
 							style={{
-								color: "#212129",
 								fontFamily: "HeyWow Bold",
 								cursor: "pointer",
 							}}
 						>
 							<input
+								onClick={changeRadioColor}
 								type="radio"
 								name="budget"
 								value={"Over 250.000 eur"}
@@ -411,24 +454,25 @@ export default function ContactForm() {
 						</label>
 					</div>
 					<div
+						className="selectedRadio"
 						style={{
 							borderColor: "#CBD3D6",
 							border: "2px solid",
 							borderRadius: "48px",
 							textAlign: "center",
-							height: "36px",
+							height: "100%",
 							flexShrink: 2,
 							marginBottom: "50px",
 						}}
 					>
 						<label
 							style={{
-								color: "#212129",
 								fontFamily: "HeyWow Bold",
 								cursor: "pointer",
 							}}
 						>
 							<input
+								onClick={changeRadioColor}
 								type="radio"
 								name="budget"
 								checked
@@ -460,10 +504,12 @@ export default function ContactForm() {
 							width: "100%",
 							marginBottom: "50px",
 							border: "dotted 2px",
-							borderColor: "#CBD3D6",
+							borderBottomColor: "#CBD3D6",
 							borderRadius: "32px",
 							alignItems: "center",
 							height: "116px",
+							justifyContent: "center",
+							gap: "2px",
 							verticalAlign: "middle",
 							cursor: "pointer",
 						}}
@@ -476,7 +522,6 @@ export default function ContactForm() {
 								textAlign: "center",
 								backgroundColor: "transparent",
 								fontFamily: poppins.style.fontFamily,
-								width: "100%",
 								lineHeight: "32px",
 								verticalAlign: "middle",
 							}}
@@ -515,6 +560,7 @@ export default function ContactForm() {
 						<input
 							type="checkbox"
 							id="privacyPolicy"
+							required
 							name="privacyPolicy"
 							style={{
 								borderRadius: "2px",

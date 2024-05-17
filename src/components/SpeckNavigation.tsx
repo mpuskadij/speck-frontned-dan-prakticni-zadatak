@@ -4,7 +4,8 @@ export default function SpeckNavigation() {
 	return (
 		<header
 			style={{
-				display: "block",
+				display: "flex",
+				justifyContent: "space-between",
 				overflow: "auto",
 				backgroundColor: "#FFFFFF",
 			}}

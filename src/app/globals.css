@@ -19,11 +19,15 @@
 body {
 	background-color: white;
 }
-input:focus,
-select:focus {
+
+input,
+select {
+	color: black;
+}
+
+input:focus {
 	outline: none;
 	border-bottom-color: black;
-	color: black;
 }
 
 #fileList {
@@ -32,9 +36,18 @@ select:focus {
 	padding-bottom: 10px;
 }
 
-div > label + input[type="radio"]:checked {
+.selectedRadio {
 	background-color: #bf3939;
+}
+.selectedRadio label {
 	color: white;
+}
+
+.notSelectedRadio {
+	background-color: transparent;
+}
+.notSelectedRadio label {
+	color: #212129;
 }
 
 @layer utilities {

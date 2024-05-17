@@ -1,17 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+const apiKey = "re_A5mBt7h8_M7gFCUwnvxS1E9LjFFSfyCKF";
+const receiverMail = "mpuskadij20@student.foi.hr";
 
 export async function POST(request: NextRequest, response: NextResponse) {
-	if (request.method == "POST") {
-		const resend = new Resend("re_A5mBt7h8_M7gFCUwnvxS1E9LjFFSfyCKF");
+	try {
+		const resend = new Resend(apiKey);
 		const body = await request.json();
 		const files = new Array<string>();
 		body.files.forEach((file: Buffer) => files.push(file.toString("base64")));
 
 		await resend.emails.send({
 			from: "onboarding@resend.dev",
-			to: "mpuskadij20@student.foi.hr",
+			to: receiverMail,
 			subject: "New Contact Form Filled",
 			html:
 				"<p>Data from contact form:<br></br> " +
@@ -36,6 +38,11 @@ export async function POST(request: NextRequest, response: NextResponse) {
 				"</p>",
 		});
 		console.log("Email sent");
-		return NextResponse.json({ message: "success" }, { status: 200 });
+		return NextResponse.json(
+			{ message: "Successfully sent email to Speck!" },
+			{ status: 200 }
+		);
+	} catch (error: any) {
+		return NextResponse.json({ message: error });
 	}
 }
